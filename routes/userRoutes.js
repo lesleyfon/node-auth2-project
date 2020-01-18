@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs')
-const { findUsers, addUser } = require('./../models/userModels')
+const { findUsers, addUser, findUserByUserName} = require('./../models/userModels')
 
 router.post('/register', async (req, res, next)=> {
     const user = req.body;
@@ -21,6 +21,36 @@ router.post('/register', async (req, res, next)=> {
    
 })
 
+router.post('/login', async (req, res, next)=>{
+    const {username, password} = req.body;
+    try {
+
+        if(username && password ){
+            const user = await findUserByUserName(username)
+            const passwordValid = bcrypt.compareSync(password, user.password)
+            if(passwordValid){
+                req.session.user = user
+                res.status(200).json({
+                    message: `Welcome ${user.username}!`,
+                  })
+            }else{
+                res.status(400).json({
+                    message: 'Incorrect Credentials'
+                })
+            }
+        }else{
+            res.status(400).json({
+                message: 'Please provide username and password'
+            })
+        }
+    } catch (error) {
+        res.status(404).json({
+
+            message: 'server Error',
+            error: error
+        })
+    }
+})
 router.get('/users', async (req, res, next)=>{
     res.status(200).json({
         data: await findUsers()
