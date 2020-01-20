@@ -50,11 +50,19 @@ router.post('/login', async (req, res, next)=>{
             error: error
         })
     }
-})
+});
+
 router.get('/users', async (req, res, next)=>{
-    res.status(200).json({
-        data: await findUsers()
-    })
-})
+    console.log(req.session)
+    if(!req.session || !req.session.user){
+        return res.status(403).json({
+            message: 'You are not authorized'
+        })
+    }else{
+        res.status(200).json({
+            data: await findUsers()
+        })
+    }
+});
 
 module.exports = router;

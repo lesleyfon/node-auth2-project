@@ -9,8 +9,8 @@ app.use(session({
     name: 'dbdb',
     secret: 'try not to get caught or Ill come for you',
     cookie:{
-        maxAge: 2 * 60 * 1000,
-        httpOnly: true,
+        maxAge:  15000,
+        httpOnly: true, //Make  it so that 
     },
     resave: false,
     saveUninitialized: false
