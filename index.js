@@ -2,7 +2,9 @@ const express = require('express')
 const session = require('express-session');
 const app = express();
 const PORT = 5000;
-const userRoutes = require('./routes/userRoutes')
+const userRoutes = require('./routes/userRoutes');
+const dbConfig = require('./database/dbConfig');
+const KnexSessionStore = require('connect-session-knex')(session);
 
 
 app.use(session({
@@ -13,7 +15,11 @@ app.use(session({
         httpOnly: true, //Make  it so that 
     },
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: false,
+    store: new KnexSessionStore({
+        knex: dbConfig,
+        createtable: true
+    })
 }))
 app.use(express.json());
 app.use('/auth', userRoutes)
