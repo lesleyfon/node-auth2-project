@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs')
+const restricted = require('./../middleware/restricted')
 const { findUsers, addUser, findUserByUserName} = require('./../models/userModels')
+
 
 router.post('/register', async (req, res, next)=> {
     const user = req.body;
@@ -52,17 +54,11 @@ router.post('/login', async (req, res, next)=>{
     }
 });
 
-router.get('/users', async (req, res, next)=>{
-    console.log(req.session)
-    if(!req.session || !req.session.user){
-        return res.status(403).json({
-            message: 'You are not authorized'
-        })
-    }else{
+router.get('/users', restricted(), async (req, res, next)=>{
         res.status(200).json({
             data: await findUsers()
         })
-    }
 });
+
 
 module.exports = router;
